@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Esploratori dell'Invisibile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@500;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Gochi+Hand&display=swap">
+<style>
+/* Layout: pagine di un albo illustrato. Fondo carta pesca, i "cartelli" arancioni a pois delle tavole di Eleonora fanno da etichette di sezione. */
+:root{
+  --paper:#FFF6EF; --paper-2:#FDE7D7; --card:#FFFFFF; --ink:#3B2D4D; --ink-soft:#6E6080;
+  --coral:#E0604F; --sign:#F08A3C; --dot:#F6CF45; --teal:#3F9C95; --magenta:#B2426C;
+  --lavender:#9C98DB; --leaf:#5E9E47; --leaf-dark:#4A8237; --sky:#79B4D6; --line:#EBD3C4;
+  --kw-org:#E8873A; --kw-pro:#6B8F37; --kw-dna:#2F5C99; --kw-cell:#D2675F; --kw-ribo:#7C49A6;
+  --page:#FFFDF9; --shadow:0 10px 30px rgba(92,52,40,.14);
+  --f-display:"Grandstander","Comic Sans MS",ui-rounded,system-ui,sans-serif;
+  --f-body:"Nunito",ui-rounded,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-hand:"Gochi Hand","Bradley Hand","Comic Sans MS",cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0F2A31; --paper-2:#143840; --card:#173F48; --ink:#F6ECE4; --ink-soft:#B9C9C9;
+  --coral:#F38A78; --sign:#F39A52; --dot:#F6CF45; --teal:#6CC3BA; --magenta:#E07CA0;
+  --lavender:#B9B6F0; --leaf:#78B95E; --leaf-dark:#5E9E47; --sky:#8CC4E2; --line:#2A5560;
+  --kw-org:#F3A262; --kw-pro:#A6CC6A; --kw-dna:#8EB6F0; --kw-cell:#F09A90; --kw-ribo:#C49BEA;
+  --page:#FFFDF9; --shadow:0 10px 30px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0F2A31; --paper-2:#143840; --card:#173F48; --ink:#F6ECE4; --ink-soft:#B9C9C9;
+  --coral:#F38A78; --sign:#F39A52; --dot:#F6CF45; --teal:#6CC3BA; --magenta:#E07CA0;
+  --lavender:#B9B6F0; --leaf:#78B95E; --leaf-dark:#5E9E47; --sky:#8CC4E2; --line:#2A5560;
+  --kw-org:#F3A262; --kw-pro:#A6CC6A; --kw-dna:#8EB6F0; --kw-cell:#F09A90; --kw-ribo:#C49BEA;
+  --page:#FFFDF9; --shadow:0 10px 30px rgba(0,0,0,.35); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6}
+img{max-width:100%;display:block}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--sign);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+h2{font-size:clamp(1.9rem,4vw,2.8rem);color:var(--coral);font-weight:800}
+h3{font-size:1.3rem;font-weight:700}
+p{margin:0}
+.lead{font-size:1.12rem;color:var(--ink-soft);max-width:60ch}
+
+/* cartello a pois: il segnaposto delle tavole */
+.cartello{display:inline-block;font-family:var(--f-hand);font-size:1.25rem;line-height:1.1;color:#3B2D4D;background:#FCE8DC;
+  border:7px solid var(--sign);outline:3px dotted var(--dot);outline-offset:-6px;border-radius:9px;padding:.35em .7em;transform:rotate(-2deg)}
+.cartello.small{font-size:1rem;border-width:5px;outline-width:2px;outline-offset:-4px}
+
+/* top strip + header */
+.strip{background:var(--sky);color:#fff;text-align:center;font-weight:700;font-size:.92rem;padding:.45rem 16px;letter-spacing:.02em}
+header.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand img{width:54px;height:54px;border-radius:50%;object-fit:cover;border:3px solid var(--card);box-shadow:var(--shadow)}
+.brand b{font-family:var(--f-hand);font-size:1.45rem;color:var(--coral);line-height:1;font-weight:400}
+.brand small{display:block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);font-weight:800}
+.nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0;font-weight:800;font-size:.88rem;letter-spacing:.08em;text-transform:uppercase}
+.nav ul a{text-decoration:none}
+.nav ul a:hover{color:var(--coral)}
+.btn{display:inline-flex;align-items:center;gap:.5em;border:0;cursor:pointer;font:800 1.05rem/1 var(--f-body);letter-spacing:.04em;text-transform:uppercase;
+  background:var(--leaf);color:#fff;padding:.95em 1.6em;border-radius:999px;box-shadow:0 4px 0 var(--leaf-dark);text-decoration:none;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--leaf-dark)}
+.btn.ghost{background:var(--card);color:var(--ink);box-shadow:0 4px 0 var(--line)}
+@media (max-width:860px){.nav ul{display:none}}
+
+/* bunting: cellule appese a un filo di ragnatela */
+.bunting{height:46px;background:
+  radial-gradient(circle at 50% 0,transparent 0,transparent 0) ;position:relative;overflow:hidden}
+.bunting svg{width:100%;height:46px;display:block}
+
+/* hero */
+.hero{padding-block:28px 64px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.hero h1{font-family:var(--f-hand);font-weight:400;font-size:clamp(2.6rem,6vw,4.6rem);color:var(--coral);line-height:1.02;margin-block:14px 18px}
+.hero h1 em{font-style:normal;color:var(--teal)}
+.hero .cta-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:26px;align-items:center}
+.pill{display:inline-block;background:var(--sky);color:#fff;font-weight:800;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;padding:.45em 1em;border-radius:999px}
+.pill.leaf{background:var(--leaf)} .pill.lav{background:var(--lavender)} .pill.mag{background:var(--magenta)}
+.trust{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:22px;color:var(--ink-soft);font-weight:700;font-size:.92rem}
+.trust span::before{content:"✦ ";color:var(--sign)}
+.hero-book{position:relative;max-width:470px;margin-inline:auto;width:100%}
+.hero-book .cover{transform:rotate(2.5deg)}
+.hero-book .riwi-bubble{position:absolute;left:-26px;bottom:34px;display:flex;align-items:center;gap:10px;background:var(--card);border-radius:20px;padding:10px 14px 10px 10px;box-shadow:var(--shadow);max-width:260px;font-size:.9rem;font-weight:700}
+.hero-book .riwi-bubble img{width:52px;height:52px;border-radius:50%;object-fit:cover;flex:none}
+@media (max-width:860px){.hero-grid{grid-template-columns:1fr}.hero-book .riwi-bubble{left:0}}
+
+/* book cover component */
+.cover{position:relative;aspect-ratio:700/906;width:100%;max-width:100%;border-radius:6px 14px 14px 6px;overflow:hidden;box-shadow:-6px 0 0 #00000022 inset,var(--shadow),0 0 0 1px #0000000d;background:#F7B78D}
+.cover>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cover .ttl{position:absolute;left:8%;right:8%;top:6%;text-align:center}
+.cover .ttl .cartello{font-size:clamp(1.1rem,3.2vw,1.9rem);transform:rotate(-3deg);max-width:100%;overflow-wrap:anywhere}
+.cover .ttl .cartello b{display:block;font-weight:400;font-size:1.25em;color:var(--coral)}
+.cover .auth{position:absolute;bottom:4%;left:0;right:0;text-align:center;font-family:var(--f-hand);color:#fff;font-size:clamp(.85rem,2vw,1.05rem);text-shadow:0 1px 3px #0006}
+.cover .serie{position:absolute;top:0;right:7%;background:var(--magenta);color:#fff;font:800 .62rem/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;padding:14px 8px 10px;border-radius:0 0 8px 8px;writing-mode:vertical-rl}
+
+section{padding-block:72px}
+.sec-head{display:grid;gap:14px;margin-bottom:36px}
+.alt{background:var(--paper-2)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;counter-reset:s}
+.step{background:var(--card);border-radius:22px;padding:24px;display:grid;gap:10px;align-content:start}
+.step .n{font-family:var(--f-hand);font-size:2.6rem;color:var(--sign);line-height:1}
+.step p{color:var(--ink-soft)}
+@media (max-width:760px){.steps{grid-template-columns:1fr}}
+
+/* configuratore */
+.builder{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:36px;align-items:start}
+@media (max-width:980px){.builder{grid-template-columns:1fr}}
+form.cfg{background:var(--card);border-radius:24px;padding:24px;display:grid;gap:20px;box-shadow:var(--shadow)}
+.field{display:grid;gap:8px;min-width:0}
+.field>label,.field>.lbl{font-weight:800;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.field input[type=text],.field textarea{font:600 1.05rem var(--f-body);color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:.7em .9em;width:100%}
+.field textarea{resize:vertical;min-height:84px;font-weight:400;font-style:italic}
+.field input:focus,.field textarea:focus{border-color:var(--sign);outline:none}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{cursor:pointer;border:2px solid var(--line);border-radius:999px;padding:.4em .95em;font-weight:700;font-size:.92rem;background:var(--paper)}
+.seg input:checked+label{border-color:var(--sign);background:var(--sign);color:#fff}
+.seg input:focus-visible+label{outline:3px solid var(--sign);outline-offset:2px}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.swatches input{position:absolute;opacity:0;pointer-events:none}
+.swatches label{width:34px;height:34px;border-radius:50%;cursor:pointer;border:3px solid var(--card);box-shadow:0 0 0 2px var(--line)}
+.swatches input:checked+label{box-shadow:0 0 0 3px var(--sign)}
+.swatches input:focus-visible+label{outline:3px solid var(--sign);outline-offset:3px}
+.avatar-row{display:flex;gap:16px;align-items:center;background:var(--paper);border-radius:18px;padding:12px}
+.avatar-row svg{width:96px;height:112px;flex:none}
+.avatar-row p{font-size:.85rem;color:var(--ink-soft)}
+.note{font-size:.82rem;color:var(--ink-soft)}
+.price{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-top:2px dashed var(--line);padding-top:16px;flex-wrap:wrap}
+.price b{font-family:var(--f-display);font-size:1.8rem}
+.price small{color:var(--ink-soft);font-size:.8rem}
+
+/* sfogliatore */
+.viewer{display:grid;gap:16px;min-width:0}
+.spread{display:grid;grid-template-columns:1fr 1fr;background:var(--page);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;position:relative;min-height:0}
+.spread::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:36px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,#00000014 45%,#00000022 50%,#00000014 55%,transparent);pointer-events:none}
+.spread.single{grid-template-columns:1fr;max-width:460px;margin-inline:auto;width:100%;background:transparent;box-shadow:none}
+.spread.single::after{display:none}
+.pg{aspect-ratio:700/906;position:relative;min-width:0;overflow:hidden}
+.pg.txt{padding:clamp(18px,3.4vw,38px);display:flex;flex-direction:column;gap:.9em;color:#2E2438;font-family:Georgia,"Times New Roman",serif;font-size:clamp(.82rem,1.25vw,1rem);line-height:1.62;overflow:auto}
+.pg.txt .chap{font-family:var(--f-display);text-align:center;color:#2E2438;font-size:1.05em;font-weight:800;letter-spacing:.04em}
+.pg.txt .chap span{display:block;font-size:1.35em;font-weight:700;letter-spacing:0}
+.pg.txt p{text-indent:1.4em;text-align:justify;hyphens:auto}
+.pg.txt .ded{font-family:var(--f-hand);font-size:1.3em;color:#7a5a6e;text-align:center;text-indent:0;border-bottom:2px dotted #e8c7b4;padding-bottom:.6em}
+.pg.txt .folio{margin-top:auto;text-align:center;font-size:.8em;color:#8c7f8a}
+.pg.img img{width:100%;height:100%;object-fit:cover}
+.nome{background:linear-gradient(transparent 58%,#F6CF4588 58%);font-weight:700;border-radius:2px}
+.kw-org{color:#E07A28;font-weight:700} .kw-pro{color:#5E8A2B;font-weight:700} .kw-dna{color:#2F5C99;font-weight:700}
+.kw-cell{color:#C8574F;font-weight:700} .kw-ribo{color:#7C49A6;font-weight:700}
+.vctl{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.vctl .dots{display:flex;gap:6px;flex-wrap:wrap}
+.vctl .dots button{width:11px;height:11px;border-radius:50%;border:0;background:var(--line);cursor:pointer;padding:0}
+.vctl .dots button[aria-current="true"]{background:var(--sign);transform:scale(1.25)}
+.arrow{width:46px;height:46px;border-radius:50%;border:0;background:var(--card);color:var(--ink);font-size:1.3rem;cursor:pointer;box-shadow:var(--shadow)}
+.arrow:disabled{opacity:.35;cursor:default}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.82rem;color:var(--ink-soft)}
+.legend i{font-style:normal;font-weight:800}
+.legend .lo{color:var(--kw-org)} .legend .lp{color:var(--kw-pro)} .legend .ld{color:var(--kw-dna)} .legend .lc{color:var(--kw-cell)} .legend .lr{color:var(--kw-ribo)}
+@media (max-width:620px){.spread{grid-template-columns:1fr}.spread::after{display:none}.pg.txt{aspect-ratio:auto;font-size:.95rem}}
+
+/* calamita finale */
+.magnet{aspect-ratio:700/906;display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,#FFE3C9,#F7B78D 70%);padding:24px}
+.magnet .disc{width:min(78%,300px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#F3EDF9 55%,#D9D0EA);box-shadow:0 14px 0 #c7b9dc,0 24px 40px #0003;display:grid;place-items:center;text-align:center;padding:12%;color:#3B2D4D}
+.magnet .disc h4{font-family:var(--f-hand);font-weight:400;font-size:clamp(1.1rem,3vw,1.6rem);margin:0;line-height:1.05}
+.magnet .disc .egfr{font-family:var(--f-display);font-weight:800;font-size:clamp(1.6rem,5vw,2.6rem);color:#C8574F;line-height:1}
+.magnet .disc small{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#6E6080}
+
+/* collana */
+.missions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+@media (max-width:980px){.missions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.missions{grid-template-columns:1fr}}
+.mission{background:var(--card);border-radius:22px;overflow:hidden;display:grid;grid-template-rows:auto 1fr}
+.mission .art{aspect-ratio:16/10;position:relative;display:grid;place-items:center;overflow:hidden}
+.mission .art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mission .art .blob{position:absolute;width:62%;aspect-ratio:1;border-radius:48% 52% 45% 55%/55% 45% 55% 45%;filter:blur(.4px)}
+.mission .art .cartello{position:relative;z-index:1}
+.mission .art .pill{position:absolute;top:12px;left:12px;z-index:1}
+.mission .body{padding:18px 20px 22px;display:grid;gap:10px;align-content:start}
+.mission .num{font-weight:800;font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.mission dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:.9rem}
+.mission dt{font-weight:800;color:var(--ink-soft)}
+.mission dd{margin:0}
+
+/* lore */
+.lore-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+@media (max-width:760px){.lore-grid{grid-template-columns:1fr}}
+.lore{background:var(--card);border-radius:22px;padding:24px;display:grid;gap:12px;align-content:start}
+.lore .face{display:flex;gap:14px;align-items:center}
+.lore .face img,.lore .face .ic{width:64px;height:64px;border-radius:50%;object-fit:cover;flex:none;background:var(--paper-2);display:grid;place-items:center;font-family:var(--f-hand);font-size:1.6rem;color:var(--sign)}
+.lore p{color:var(--ink-soft)}
+.lore ul{margin:0;padding-left:1.1em;color:var(--ink-soft);display:grid;gap:4px}
+.motto{grid-column:1/-1;text-align:center;padding:34px 24px;background:var(--teal);color:#fff;border-radius:22px}
+.motto q{font-family:var(--f-hand);font-size:clamp(1.8rem,4.5vw,3rem);line-height:1.1;quotes:"«" "»"}
+.motto p{color:#ffffffd9;margin-top:10px}
+.formula{grid-column:1/-1}
+.formula ol{counter-reset:none}
+
+/* scuole */
+.school{display:grid;grid-template-columns:.9fr 1.1fr;gap:40px;align-items:center}
+@media (max-width:900px){.school{grid-template-columns:1fr}}
+.school figure{margin:0;border-radius:22px;overflow:hidden;box-shadow:var(--shadow);transform:rotate(-1.5deg)}
+.offers{display:grid;gap:14px}
+.offer{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;background:var(--card);border-radius:18px;padding:16px 18px}
+.offer .ic{grid-row:span 2;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-family:var(--f-hand);font-size:1.5rem;color:#fff}
+.offer p{color:var(--ink-soft);font-size:.95rem}
+
+/* autrici + footer */
+.authors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+@media (max-width:700px){.authors{grid-template-columns:1fr}}
+.author{display:grid;gap:8px;padding:24px;border:2px dashed var(--line);border-radius:22px}
+.author .role{font-family:var(--f-hand);font-size:1.2rem;color:var(--sign)}
+footer{background:var(--ink);color:var(--paper);padding-block:40px;font-size:.9rem}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer b{font-family:var(--f-hand);font-weight:400;font-size:1.4rem}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:.8em 1.2em;border-radius:14px;font-weight:700;box-shadow:var(--shadow);z-index:50;max-width:calc(100% - 32px)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+@keyframes float{50%{transform:translateY(-6px) rotate(-1deg)}}
+.floaty{animation:float 5s ease-in-out infinite}
+</style>
+</head>
+<body>
+
+<div class="strip">Libri personalizzati con le illustrazioni originali di Eleonora Balloi · Edizione Classe per le scuole</div>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="brand" href="#top">
+      <img src="img/navicella.png" alt="La navicella di Riwi">
+      <span><b>Esploratori dell'Invisibile</b><small>I tesori di Riwi</small></span>
+    </a>
+    <ul>
+      <li><a href="#crea">Crea il libro</a></li>
+      <li><a href="#collana">La collana</a></li>
+      <li><a href="#mondo">Il mondo di Riwi</a></li>
+      <li><a href="#scuole">Scuole</a></li>
+    </ul>
+    <a class="btn" href="#crea">Crea ora</a>
+  </div>
+</header>
+
+<div class="bunting" aria-hidden="true"><svg id="bunting" viewBox="0 0 1200 46" preserveAspectRatio="none"></svg></div>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="cartello">Missione n° 1 · Cellula della pelle</span>
+      <h1>Una notte di luna piena, un ragno esploratore cerca <em>proprio te</em>.</h1>
+      <p class="lead">Il tuo bambino diventa protagonista di un viaggio dentro una cellula vera: salta sulla membrana, cavalca una proteina sulle autostrade dei microtubuli, legge il DNA e cattura la proteina tesoro. Scienza vera, raccontata come un'avventura.</p>
+      <div class="cta-row">
+        <a class="btn" href="#crea">Crea il tuo libro</a>
+        <a class="btn ghost" href="#scuole">Per le scuole</a>
+      </div>
+      <div class="trust"><span>8–11 anni</span><span>Glossario scientifico illustrato</span><span>Calamita tesoro in regalo</span></div>
+    </div>
+    <div class="hero-book">
+      <div class="cover floaty" id="heroCover"></div>
+      <div class="riwi-bubble"><img src="img/riwi.png" alt="Riwi, il ragno esploratore"><span id="heroBubble">«Ciao Zoe! Sei pronta a entrare in una cellula?»</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="cartello small">Come funziona</span>
+      <h2>Dal nome alla libreria in tre passi</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="n">1</span><h3>Scegli l'esploratore</h3><p>Nome, aspetto, la scuola che frequenta. Eleonora ha disegnato il protagonista in tante varianti: capelli, carnagione, occhiali.</p></div>
+      <div class="step"><span class="n">2</span><h3>Sfoglia l'anteprima</h3><p>Leggi le pagine con il suo nome dentro la storia. Le parole scientifiche sono colorate, come nel diario di bordo di Riwi.</p></div>
+      <div class="step"><span class="n">3</span><h3>Ricevi libro e tesoro</h3><p>Copertina rigida, dedica stampata e la calamita della proteina tesoro, la prima del suo Album degli Esploratori.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="crea">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="cartello small">Crea il libro</span>
+      <h2 id="creaTitle">Zoe e i tesori della cellula</h2>
+      <p class="lead">Cambia i dati a sinistra: l'anteprima si aggiorna mentre scrivi.</p>
+    </div>
+    <div class="builder">
+      <form class="cfg" id="cfg" autocomplete="off">
+        <div class="field">
+          <label for="f-nome">Nome dell'esploratore</label>
+          <input type="text" id="f-nome" maxlength="16" value="Zoe">
+        </div>
+        <div class="field">
+          <span class="lbl" id="l-gen">Nel libro è</span>
+          <div class="seg" role="radiogroup" aria-labelledby="l-gen">
+            <input type="radio" name="gen" id="g-f" value="f" checked><label for="g-f">un'esploratrice</label>
+            <input type="radio" name="gen" id="g-m" value="m"><label for="g-m">un esploratore</label>
+          </div>
+        </div>
+        <div class="field">
+          <span class="lbl">Aspetto</span>
+          <div class="avatar-row"><svg id="avatar" viewBox="0 0 120 140" role="img" aria-label="Anteprima del protagonista"></svg><p>Segnaposto: nel libro il protagonista è disegnato a mano da Eleonora in ogni tavola, con l'aspetto scelto qui.</p></div>
+        </div>
+        <div class="field">
+          <span class="lbl" id="l-hair">Capelli</span>
+          <div class="swatches" role="radiogroup" aria-labelledby="l-hair" id="sw-hair"></div>
+        </div>
+        <div class="field">
+          <span class="lbl" id="l-skin">Carnagione</span>
+          <div class="swatches" role="radiogroup" aria-labelledby="l-skin" id="sw-skin"></div>
+        </div>
+        <div class="field">
+          <span class="lbl" id="l-style">Acconciatura</span>
+          <div class="seg" role="radiogroup" aria-labelledby="l-style" id="sg-style"></div>
+        </div>
+        <div class="field">
+          <span class="lbl" id="l-gl">Occhiali</span>
+          <div class="seg" role="radiogroup" aria-labelledby="l-gl">
+            <input type="radio" name="gl" id="gl-n" value="0" checked><label for="gl-n">No</label>
+            <input type="radio" name="gl" id="gl-y" value="1"><label for="gl-y">Sì, come Riwi</label>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-scuola">La sua scuola</label>
+          <input type="text" id="f-scuola" maxlength="34" value="scuola di via Fiume">
+          <span class="note">Compare nel capitolo 1, nella lezione di scienze.</span>
+        </div>
+        <div class="field">
+          <label for="f-ded">Dedica (facoltativa)</label>
+          <textarea id="f-ded" maxlength="180">Per la nostra piccola esploratrice: non smettere mai di chiederti com'è fatto il mondo. Mamma e papà</textarea>
+        </div>
+        <div class="price">
+          <span><b>€ 34,90</b><br><small>Prezzo indicativo · copertina rigida 21×28 cm · 56 pagine</small></span>
+          <button type="submit" class="btn">Aggiungi</button>
+        </div>
+      </form>
+
+      <div class="viewer" aria-live="polite">
+        <div class="spread" id="spread"></div>
+        <div class="vctl">
+          <button class="arrow" id="prev" type="button" aria-label="Pagina precedente">←</button>
+          <div class="dots" id="dots"></div>
+          <button class="arrow" id="next" type="button" aria-label="Pagina successiva">→</button>
+        </div>
+        <div class="legend"><span>Parole del diario di bordo:</span><i class="lc">cellula</i><i class="lo">organelli</i><i class="lp">proteine</i><i class="ld">DNA e RNA</i><i class="lr">ribosoma</i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="collana" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="cartello small">La collana</span>
+      <h2>I Tesori di Riwi</h2>
+      <p class="lead">Ogni libro è una missione su un nuovo pianeta cellulare. Una cellula diversa, una proteina tesoro da catturare, un travestimento nuovo dal tablet di Riwi. Alla fine di ogni missione arriva una calamita per l'Album degli Esploratori.</p>
+    </div>
+    <div class="missions" id="missions"></div>
+  </div>
+</section>
+
+<section id="mondo">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="cartello small">Il mondo di Riwi</span>
+      <h2>Una lore da collezionare</h2>
+      <p class="lead">Tutto nasce da dettagli che sono già nel primo libro: un ragno che invecchia, un bisnonno esploratore, una collezione di proteine. Basta metterli in ordine per avere una serie.</p>
+    </div>
+    <div class="lore-grid">
+      <div class="lore">
+        <div class="face"><img src="img/riwi.png" alt=""><div><h3>Riwi</h3><span class="pill lav">Ragno esploratore</span></div></div>
+        <p>Esploratore di pianeti cellulari e biologia intergalattica. Occhialoni verdi, otto zampe, sempre di fretta. Sta invecchiando e non ha più la forza di domare le proteine trascrittrici: per ogni missione gli serve un giovane umano coraggioso.</p>
+      </div>
+      <div class="lore">
+        <div class="face"><svg id="avatarLore" viewBox="0 0 120 140" width="64" height="64" style="background:var(--paper-2);border-radius:50%" aria-hidden="true"></svg><div><h3>L'esploratore umano</h3><span class="pill">È il lettore</span></div></div>
+        <p>Il protagonista ha il nome e l'aspetto del bambino. Parte curioso e un po' distratto, sbaglia, si perde, e alla fine risolve la missione da solo con quello che ha imparato. Riwi lo chiama «straordinario piccolo umano».</p>
+      </div>
+      <div class="lore">
+        <div class="face"><img src="img/navicella.png" alt=""><div><h3>Telaria e la Gilda</h3><span class="pill leaf">Il pianeta di Riwi</span></div></div>
+        <p>Su Telaria, pianeta di ragni scienziati, la Gilda degli Esploratori dell'Invisibile studia come funzionano le proteine di tutte le galassie. Ogni tesoro catturato finisce nel Grande Album della Gilda. I bambini che completano una missione ricevono un numero di matricola.</p>
+      </div>
+      <div class="lore">
+        <div class="face"><span class="ic">B</span><div><h3>Il bisnonno di Riwi</h3><span class="pill mag">Leggenda della Gilda</span></div></div>
+        <p>Coraggioso esploratore di cellule, autore delle regole d'oro: mai partire senza un buon trapano, e in certe situazioni un cappello da cowboy. Il suo moschettone funziona da più di 130 anni. Può diventare il narratore di uno spin-off sulla storia della scienza.</p>
+      </div>
+      <div class="motto">
+        <q>Un gene, un RNA, una proteina!</q>
+        <p>Il motto di Riwi. Torna in ogni libro e i bambini lo ripetono a memoria.</p>
+      </div>
+      <div class="lore">
+        <h3>Gli oggetti ricorrenti</h3>
+        <ul>
+          <li><b>Il tablet di Riwi</b>: travestimenti istantanei e mappe interattive. Nessuna magia, solo tecnologia avanzata.</li>
+          <li><b>L'ampolla segreta</b>: rallenta la cellula quel tanto che basta per leggere la mappa.</li>
+          <li><b>I cartelli a pois</b>: in ogni tavola indicano il nome di organelli e proteine.</li>
+          <li><b>La bottiglietta luccicante</b>: rimpicciolisce la proteina tesoro e riporta a casa.</li>
+        </ul>
+      </div>
+      <div class="lore">
+        <h3>La formula di ogni missione</h3>
+        <ul>
+          <li>Una notte speciale, Riwi atterra sul davanzale.</li>
+          <li>Ingresso nella cellula e primo cartello.</li>
+          <li>Un viaggio tra gli organelli con un mezzo di trasporto biologico.</li>
+          <li>Il protagonista si perde e risolve un enigma da solo.</li>
+          <li>Cattura del tesoro, risveglio, calamita in tasca.</li>
+          <li>In chiusura il Diario di bordo di Riwi, il glossario illustrato.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="scuole" class="alt">
+  <div class="wrap school">
+    <figure><img src="img/classe.jpg" alt="La classe di Zoe davanti alla lavagna con la lezione sulla cellula"></figure>
+    <div class="sec-head" style="margin:0">
+      <span class="cartello small">Per le scuole</span>
+      <h2>Tutta la classe dentro la cellula</h2>
+      <p class="lead">Per le classi IV e V della primaria e la prima media. Il programma di scienze diventa una storia in cui ogni alunno è protagonista.</p>
+      <div class="offers">
+        <div class="offer"><span class="ic" style="background:var(--sign)">1</span><h3>Edizione Classe</h3><p>Ogni alunno riceve la sua copia con il proprio nome. Nella tavola della lezione compaiono i nomi dei compagni e dell'insegnante. Ordine unico, con l'elenco della classe.</p></div>
+        <div class="offer"><span class="ic" style="background:var(--teal)">2</span><h3>Kit per l'insegnante</h3><p>Schede dal Diario di bordo, la battaglia navale del gene EGFR da giocare in classe e un percorso in cinque lezioni collegato alle Indicazioni Nazionali di scienze.</p></div>
+        <div class="offer"><span class="ic" style="background:var(--magenta)">3</span><h3>Laboratorio con le autrici</h3><p>Un incontro in classe: estrazione del DNA dalla fragola con materiali di cucina e disegno dal vivo dei pianeti cellulari con Eleonora.</p></div>
+      </div>
+      <div><a class="btn" href="#crea">Richiedi un preventivo</a></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="cartello small">Le autrici</span><h2>Chi ha creato Riwi</h2></div>
+    <div class="authors">
+      <div class="author"><span class="role">Illustrazioni</span><h3>Eleonora Balloi</h3><p class="lead">Acquerelli caldi, occhi grandi e guance rosate. Ha trasformato membrane, microtubuli e ribosomi in paesaggi da esplorare, con i cartelli a pois come guida.</p></div>
+      <div class="author"><span class="role">Testi</span><h3>Loriana Vitillo</h3><p class="lead">Ha scritto la storia di Zoe e Riwi e il Diario di bordo che chiude il libro, con i nomi veri di ogni proteina incontrata.</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><b>Esploratori dell'Invisibile</b><br>Prototipo · collana «I Tesori di Riwi»</div>
+    <div>Illustrazioni © Eleonora Balloi · Testi © Loriana Vitillo</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const HAIR={rame:"#B9542B",castano:"#5A3624",nero:"#22191C",biondo:"#E3B54B",rosso:"#D2452F"};
+const SKIN={chiara:"#F7D9C8",rosata:"#F1C3A6",olivastra:"#D49A6E",scura:"#8C5A3C"};
+const STYLES={codini:"Codini",corti:"Corti",ricci:"Ricci",lunghi:"Lunghi"};
+const st={nome:"Zoe",gen:"f",hair:"rame",skin:"chiara",style:"codini",gl:"0",scuola:"scuola di via Fiume",ded:"",page:0};
+
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+
+/* ---------- avatar nello stile delle tavole: occhi bianchi a puntino, guance rosa ---------- */
+function avatar(o){
+  const h=HAIR[o.hair], k=SKIN[o.skin];
+  let back="",front="";
+  if(o.style==="lunghi") back=`<path d="M28 58 Q26 20 60 22 Q94 20 92 58 L96 104 Q60 112 24 104 Z" fill="${h}"/>`;
+  if(o.style==="codini") back=`<ellipse cx="22" cy="62" rx="10" ry="16" fill="${h}" transform="rotate(-18 22 62)"/><ellipse cx="98" cy="62" rx="10" ry="16" fill="${h}" transform="rotate(18 98 62)"/><circle cx="31" cy="50" r="4" fill="#E0604F"/><circle cx="89" cy="50" r="4" fill="#E0604F"/>`;
+  if(o.style==="ricci"){ for(const [x,y,r] of [[34,40,11],[46,30,12],[60,27,12],[74,30,12],[86,40,11],[30,54,9],[90,54,9]]) front+=`<circle cx="${x}" cy="${y}" r="${r}" fill="${h}"/>`;}
+  else if(o.style==="corti") front=`<path d="M30 56 Q28 26 60 26 Q92 26 90 56 Q80 40 64 42 Q50 36 30 56Z" fill="${h}"/>`;
+  else front=`<path d="M30 58 Q28 24 60 25 Q92 24 90 58 Q86 42 72 38 Q60 46 44 40 Q34 44 30 58Z" fill="${h}"/>`;
+  const girl=o.gen==="f";
+  if(girl&&o.style==="codini") back=back.replace(/<circle cx="31"[^>]*\/><circle cx="89"[^>]*\/>/,`<g fill="#EE7FA6"><path d="M31 50 l-7 -5 v10z"/><path d="M31 50 l7 -5 v10z"/><path d="M89 50 l-7 -5 v10z"/><path d="M89 50 l7 -5 v10z"/></g><circle cx="31" cy="50" r="2.6" fill="#D85A88"/><circle cx="89" cy="50" r="2.6" fill="#D85A88"/>`);
+  const bow=girl&&o.style!=="codini"?`<g transform="translate(82 34) rotate(18)"><path d="M0 0 l-10 -7 v14z M0 0 l10 -7 v14z" fill="#EE7FA6"/><circle r="3.2" fill="#D85A88"/></g>`:"";
+  const lashes=girl?`<g stroke="#1d1620" stroke-width="1.6" stroke-linecap="round"><path d="M41 55 l-4 -3"/><path d="M42 52 l-3 -4"/><path d="M79 55 l4 -3"/><path d="M78 52 l3 -4"/></g>`:"";
+  const gl=o.gl==="1"?`<g fill="none" stroke="#4E9A3A" stroke-width="2.6"><circle cx="48" cy="61" r="9"/><circle cx="72" cy="61" r="9"/><path d="M57 61h6"/></g>`:"";
+  return `${back}
+  <path d="M34 140 Q34 104 60 104 Q86 104 86 140Z" fill="#3E4E8C"/>
+  <path d="M50 104 L60 114 L70 104Z" fill="#fff"/>
+  <rect x="54" y="92" width="12" height="14" rx="5" fill="${k}"/>
+  <circle cx="60" cy="62" r="31" fill="${k}"/>
+  <circle cx="42" cy="73" r="5.5" fill="#EE8A86" opacity=".55"/><circle cx="78" cy="73" r="5.5" fill="#EE8A86" opacity=".55"/>
+  <ellipse cx="48" cy="61" rx="7" ry="8" fill="#fff"/><ellipse cx="72" cy="61" rx="7" ry="8" fill="#fff"/>
+  <circle cx="50" cy="62" r="2.1" fill="#1d1620"/><circle cx="70" cy="62" r="2.1" fill="#1d1620"/>
+  <path d="M54 79 Q60 84 66 79" stroke="#8a3d3d" stroke-width="2" fill="none" stroke-linecap="round"/>
+  ${lashes}${front}${bow}${gl}`;
+}
+
+/* ---------- testo: [[parola|tipo]] = parola colorata come nel libro ---------- */
+function T(s){
+  const n=`<span class="nome">${esc(st.nome||"Zoe")}</span>`;
+  const f=st.gen==="f";
+  return s.replace(/\{N\}/g,n)
+    .replace(/\{([^|{}]*)\|([^|{}]*)\}/g,(_,a,b)=>f?a:b)
+    .replace(/\[\[([^|\]]+)\|(\w+)\]\]/g,(_,w,t)=>`<span class="kw-${t}">${w}</span>`)
+    .replace(/\{S\}/g,esc(st.scuola||"scuola di via Fiume"));
+}
+const PAGES=[
+ {img:"terra",chap:["Capitolo 1","Terra"],t:[
+  "Erano le 11.35 di un tranquillo giovedì mattina e Riwi, il ragno esploratore, era appena arrivato nel sistema solare da una galassia lontanissima. Era in viaggio da mesi, il tempo stava scadendo ed era a corto di idee.",
+  "«Sto diventando vecchio…» sospirò mentre la sua navicella sorvolava la Terra. Improvvisamente, sul suo super computer, apparve un nome: {N}. «Mmm… forse…» bisbigliò Riwi."]},
+ {img:"classe",t:[
+  "Alla {S} la lezione di scienze era appena finita. Solo {N} era rimast{a|o} indietro, pensieros{a|o}. L'insegnante aveva spiegato qualcosa di nuovo: [[la cellula|cell]].",
+  "Tutti gli esseri viventi, le persone, gli alberi, gli animali, sono fatti di miliardi di cellule, troppo piccole per essere viste a occhio nudo e attaccate le une alle altre come mattoncini. «Miliardi di cellule…» osservò {N} fissando la lavagna."]},
+ {img:"zoe-riwi",chap:["Capitolo 2","Atterraggio"],t:[
+  "{N} aprì gli occhi e si sentì le vertigini, come se avesse viaggiato mille miglia con la testa sottosopra. Poi vide qualcuno osservarl{a|o} attraverso un paio di spessi occhialoni. «Ciao {N}!» esordì Riwi.",
+  "«R… r… ragno?» balbettò sbalordit{a|o}.",
+  "«Piacere di conoscerti, mi chiamo Riwi, esploratore di pianeti cellulari e biologia intergalattica, voilà!» Pigiò un tasto sul suo tablet e in un battibaleno si ritrovarono addosso due luccicanti tute da astronauta."]},
+ {img:"cellula-pelle",t:[
+  "Sopra la testa di {N} fluttuava un'enorme sfera, vagamente rotonda, talmente grande che era impossibile vederne i bordi.",
+  "«E che cos'è quello?» chiese {N}, notando in lontananza un segnale luccicante. Sul cartello c'era scritto: [[Cellula della pelle|cell]].",
+  "«La cellula!» esultò {N} incredul{a|o}. Era davvero di fronte a una di quei miliardi di cellule che formavano il suo corpo?"]},
+ {img:"membrana",t:[
+  "«Eccoci qui! Siamo sulla [[membrana cellulare|org]], che è come il guscio della cellula. Serve alla cellula per parlare con il mondo esterno» spiegò Riwi.",
+  "Ma {N} era troppo occupat{a|o} a saltellare: la superficie era elastica come un trampolino. «Questo è un super sognooo!»",
+  "«Qui vivono i [[recettori|pro]]: funzionano come piccole antenne, ricevono messaggi dal corpo e li portano dentro la cellula.»"]},
+ {img:"vescicola",chap:["Capitolo 3","Come una navicella spaziale"],t:[
+  "L'interno della cellula sembrava una metropoli senza fine, tutta scintillante di vita. «Ma dove siamo?» domandò {N} a bocca aperta.",
+  "«Siamo in una [[vescicola|org]]! Serve a trasportare le proteine da un posto all'altro della cellula. Speravo in un atterraggio più delicato, ma non va malissimo, vero?»"]},
+ {img:"organelli",t:[
+  "C'erano cose dappertutto. Riwi spiegò che si chiamano [[organelli|org]], perché come gli organi del corpo hanno ognuno un compito speciale.",
+  "«Quelle noccioline viola sono i [[mitocondri|org]]: producono l'energia che fa funzionare tutto. E alla nostra sinistra ecco l'apparato del [[Golgi|org]], l'ufficio postale della cellula!»"]},
+ {img:"cowboy",chap:["Capitolo 4","Una corsa inaspettata"],t:[
+  "In un batter d'occhio Riwi e {N} si ritrovarono vestiti da cowboy, in sella a una proteina con le gambe che trasportava un pacco importante.",
+  "«YAAAH!» intonò {N}. «Tieniti stretta, siamo su un [[microtubulo|pro]]!» borbottò Riwi. «È l'autostrada della cellula, e le sue strade non stanno mai ferme.»".replace("stretta","strett{a|o}")]},
+ {img:"nucleo",chap:["Capitolo 5","I segreti del nucleo"],t:[
+  "«Signore e signori, ecco [[il nucleo|org]]!» annunciò Riwi. «Dentro il suo guscio tiene al sicuro i segreti più preziosi.»",
+  "Fecero un salto enorme attraverso i pori. «È soffice! Rimbalza! Mi fa il solletico!» ridacchiò {N}, che non riusciva proprio a stare in piedi."]},
+ {img:"trascrizione",t:[
+  "«Il [[DNA|dna]] contiene tutte le istruzioni per fare le proteine, come un libro pieno di ricette» spiegò Riwi.",
+  "«La [[proteina trascrittrice|pro]] legge una ricetta, un [[gene|dna]], e ne scrive una copia fedele chiamata [[RNA|dna]]. Ricordati sempre: un gene, un RNA, una proteina!»",
+  "«Un gene, un RNA, una proteina!» ripeté {N}. «Anche se mi pare sempre complicato…»"]},
+ {img:"ritrovati",chap:["Capitolo 6","A caccia di geni"],t:[
+  "Pers{a|o} in fondo al nucleo, {N} si ricordò della mappa del gene: sembrava proprio una battaglia navale! Le lettere indicavano gli aiutanti volanti, i numeri le loro fermate.",
+  "Fermata dopo fermata arrivò alla X. «{N}!! Come sei arrivat{a|o} qui?!» urlò Riwi.",
+  "«Ho decifrato la mappa!»"]},
+ {img:"ribosoma",chap:["Capitolo 7","Tesori"],t:[
+  "Sulla coda del nuovo RNA arrivarono al [[ribosoma|ribo]], la fabbrica che traduce l'RNA in proteine.",
+  "Davanti ai loro occhi nacque la proteina tesoro: [[EGFR|pro]], quella che dice alla pelle di ricrescere quando ti fai un taglietto. POUF! Riwi la rimpicciolì e la chiuse in una bottiglietta luccicante. «Missione compiuta, {N}!»"]},
+ {img:"risveglio",t:[
+  "«{N}! Sono le 7 e mezza!» Era la voce di mamma. Era stato tutto un sogno?",
+  "Nella tasca del pigiama c'era una calamita, con disegnata sopra la proteina tesoro. Era tutto vero: {N} era diventat{a|o} {un'esploratrice|un esploratore} di cellule.",
+  "Ma quello che {N} non sapeva ancora era che le sue avventure nella cellula erano appena iniziate."]},
+];
+function matricola(n){let h=7;for(const c of (n||"zoe").toLowerCase())h=(h*31+c.charCodeAt(0))%9973;return String(h).padStart(4,"0")}
+
+function coverHTML(){
+  const nome=esc(st.nome||"Zoe");
+  return `<img src="img/cellula-pelle.jpg" alt="">
+   <span class="serie">I Tesori di Riwi · 1</span>
+   <div class="ttl"><span class="cartello"><b>${nome}</b>e i tesori della cellula</span></div>
+   <div class="auth">Loriana Vitillo · Eleonora Balloi</div>`;
+}
+function renderSpread(){
+  const sp=$("#spread"), i=st.page, total=PAGES.length+2;
+  sp.classList.toggle("single",i===0||i===total-1);
+  if(i===0){sp.innerHTML=`<div class="cover">${coverHTML()}</div>`;}
+  else if(i===total-1){
+    sp.innerHTML=`<div class="magnet"><div class="disc"><div><small>Album degli Esploratori · Tesoro n° 1</small><div class="egfr">EGFR</div><h4>${esc(st.nome||"Zoe")}, ${st.gen==="f"?"esploratrice":"esploratore"} di cellule</h4><small>Matricola ${matricola(st.nome)} · Cellula della pelle</small></div></div></div>`;
+  } else {
+    const p=PAGES[i-1];
+    const ded=(i===1&&st.ded.trim())?`<p class="ded">${esc(st.ded)}</p>`:"";
+    const chap=p.chap?`<div class="chap">${p.chap[0]}<span>${p.chap[1]}</span></div>`:"";
+    sp.innerHTML=`<div class="pg txt">${ded}${chap}${p.t.map(x=>`<p>${T(x)}</p>`).join("")}<div class="folio">${i*2+1}</div></div>
+      <div class="pg img"><img src="img/${p.img}.jpg" alt="Illustrazione di Eleonora Balloi"></div>`;
+  }
+  $("#prev").disabled=i===0; $("#next").disabled=i===total-1;
+  const dots=$("#dots"); if(dots.children.length!==total){dots.innerHTML="";for(let k=0;k<total;k++){const b=document.createElement("button");b.type="button";b.setAttribute("aria-label",k===0?"Copertina":k===total-1?"Calamita tesoro":"Pagine "+(k*2)+"–"+(k*2+1));b.onclick=()=>{st.page=k;renderSpread()};dots.appendChild(b)}}
+  [...dots.children].forEach((b,k)=>b.setAttribute("aria-current",k===i?"true":"false"));
+}
+function renderAll(){
+  const nome=st.nome||"Zoe";
+  $("#heroCover").innerHTML=coverHTML();
+  $("#creaTitle").textContent=`${nome} e i tesori della cellula`;
+  $("#heroBubble").textContent=`«Ciao ${nome}! Sei ${st.gen==="f"?"pronta":"pronto"} a entrare in una cellula?»`;
+  $("#avatar").innerHTML=avatar(st); $("#avatarLore").innerHTML=avatar(st);
+  renderSpread();
+}
+
+/* ---------- controlli ---------- */
+function buildSwatches(id,name,obj,key){
+  const box=$(id);
+  for(const [k,v] of Object.entries(obj)){
+    box.insertAdjacentHTML("beforeend",`<input type="radio" name="${name}" id="${name}-${k}" value="${k}" ${st[key]===k?"checked":""}><label for="${name}-${k}" style="background:${v}" title="${cap(k)}"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">${cap(k)}</span></label>`);
+  }
+}
+buildSwatches("#sw-hair","hair",HAIR,"hair");
+buildSwatches("#sw-skin","skin",SKIN,"skin");
+for(const [k,v] of Object.entries(STYLES)) $("#sg-style").insertAdjacentHTML("beforeend",`<input type="radio" name="style" id="style-${k}" value="${k}" ${st.style===k?"checked":""}><label for="style-${k}">${v}</label>`);
+st.ded=$("#f-ded").value;
+const cfg=$("#cfg");
+let styleTouched=false;
+cfg.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.id==="f-nome") st.nome=t.value.trim();
+  else if(t.id==="f-scuola") st.scuola=t.value.trim();
+  else if(t.id==="f-ded") st.ded=t.value;
+  else if(t.name) st[t.name]=t.value;
+  if(t.name==="style") styleTouched=true;
+  if(t.name==="gen"&&!styleTouched){st.style=st.gen==="f"?"codini":"corti";$("#style-"+st.style).checked=true;}
+  renderAll();
+});
+cfg.addEventListener("submit",e=>{e.preventDefault();toast(`Prototipo: il carrello non è ancora attivo. Libro di ${st.nome||"Zoe"} pronto per l'ordine.`)});
+$("#prev").onclick=()=>{if(st.page>0){st.page--;renderSpread()}};
+$("#next").onclick=()=>{if(st.page<PAGES.length+1){st.page++;renderSpread()}};
+document.addEventListener("keydown",e=>{if(e.target.matches("input,textarea"))return;if(e.key==="ArrowRight")$("#next").click();if(e.key==="ArrowLeft")$("#prev").click()});
+let tt;function toast(m){const el=$("#toast");el.textContent=m;el.hidden=false;clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,3600)}
+
+/* ---------- collana ---------- */
+const MISSIONS=[
+ {n:1,t:"I tesori della cellula",cell:"Cellula della pelle",tes:"EGFR, la proteina ricresci-pelle",cost:"Astronauta, poi cowboy",sci:"Membrana, organelli, DNA → RNA → proteina",img:"cellula-pelle",state:"Disponibile",pc:"leaf"},
+ {n:2,t:"Il segreto del muscolo",cell:"Cellula muscolare",tes:"Miosina, il motore che tira",cost:"Palombaro",sci:"Mitocondri, ATP, come ci muoviamo",c1:"#E57A6E",c2:"#F6C1A4",state:"In preparazione",pc:""},
+ {n:3,t:"Il viaggio del globulo rosso",cell:"Globulo rosso",tes:"Emoglobina, la portatrice d'ossigeno",cost:"Pilota d'aereo",sci:"Respirazione e circolazione",c1:"#C8433E",c2:"#F2B0A1",state:"In preparazione",pc:""},
+ {n:4,t:"Il messaggio del neurone",cell:"Neurone",tes:"Il canale del sodio",cost:"Postino del telegrafo",sci:"Sistema nervoso e sinapsi",c1:"#8E86D6",c2:"#D9D4F5",state:"Idea",pc:"lav"},
+ {n:5,t:"La foglia che mangia la luce",cell:"Cellula di foglia",tes:"Clorofilla",cost:"Esploratore della giungla",sci:"Fotosintesi, cellula vegetale",c1:"#6BA04B",c2:"#D6EBB8",state:"Idea",pc:"lav"},
+ {n:6,t:"Le sentinelle del corpo",cell:"Globulo bianco",tes:"L'anticorpo",cost:"Cavaliere",sci:"Sistema immunitario e vaccini",c1:"#3F9C95",c2:"#C3E6E1",state:"Idea",pc:"lav"},
+];
+$("#missions").innerHTML=MISSIONS.map(m=>`
+ <article class="mission">
+  <div class="art" style="background:${m.c2||"#F7B78D"}">
+   ${m.img?`<img src="img/${m.img}.jpg" alt="">`:`<span class="blob" style="background:radial-gradient(circle at 35% 35%,${m.c2},${m.c1})"></span>`}
+   <span class="pill ${m.pc}">${m.state}</span>
+   <span class="cartello small">${m.cell}</span>
+  </div>
+  <div class="body">
+   <span class="num">Missione ${m.n}</span>
+   <h3>${m.t}</h3>
+   <dl><dt>Tesoro</dt><dd>${m.tes}</dd><dt>Travestimento</dt><dd>${m.cost}</dd><dt>Si impara</dt><dd>${m.sci}</dd></dl>
+  </div>
+ </article>`).join("");
+
+/* ---------- festone: cellule appese a un filo di ragnatela ---------- */
+(function(){
+  const cols=["#F08A3C","#9C98DB","#3F9C95","#E0604F","#F6CF45","#B2426C","#79B4D6","#5E9E47"];
+  let s=`<path d="M0 6 Q300 26 600 8 T1200 8" stroke="#C9B3A6" stroke-width="1.5" fill="none" stroke-dasharray="2 3"/>`;
+  for(let i=0;i<24;i++){const x=25+i*48.5, y=6+Math.sin(i/24*Math.PI*2)*-7+9, c=cols[i%cols.length];
+    s+=`<line x1="${x}" y1="${y-8}" x2="${x}" y2="${y}" stroke="#C9B3A6" stroke-width="1"/><ellipse cx="${x}" cy="${y+10}" rx="11" ry="10" fill="${c}" opacity=".85"/><circle cx="${x+3}" cy="${y+12}" r="3.5" fill="#fff" opacity=".55"/>`}
+  $("#bunting").innerHTML=s;
+})();
+
+renderAll();
+</script>
+</body>
+</html>
